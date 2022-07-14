@@ -177,9 +177,7 @@ class KedroSession:
         return session
 
     def _get_logging_config(self) -> Dict[str, Any]:
-        logging_config = self._get_config_loader().get(
-            "logging*", "logging*/**", "**/logging*"
-        )
+        logging_config = self._get_config_loader().get("logging")
         # turn relative paths in logging config into absolute path
         # before initialising loggers
         logging_config = _convert_paths_to_absolute_posix(
@@ -270,6 +268,7 @@ class KedroSession:
             env=env,
             runtime_params=extra_params,
             **settings.CONFIG_LOADER_ARGS,
+            **settings.BASIC_CONFIG_LOADER_ARGS
         )
 
     def close(self):

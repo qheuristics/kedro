@@ -8,7 +8,7 @@ from warnings import warn
 
 from pluggy import PluginManager
 
-from kedro.config import ConfigLoader, MissingConfigException
+from kedro.config import ConfigLoader
 from kedro.framework.project import settings
 from kedro.io import DataCatalog
 from kedro.pipeline.pipeline import _transcode_split
@@ -239,14 +239,7 @@ class KedroContext:
             Parameters defined in `parameters.yml` with the addition of any
                 extra parameters passed at initialization.
         """
-        try:
-            # '**/parameters*' reads modular pipeline configs
-            params = self.config_loader.get(
-                "parameters*", "parameters*/**", "**/parameters*"
-            )
-        except MissingConfigException as exc:
-            warn(f"Parameters not found in your Kedro project config.\n{str(exc)}")
-            params = {}
+        params = self.config_loader.get("parameters", {})
         _update_nested_dict(params, self._extra_params or {})
         return params
 
@@ -275,13 +268,13 @@ class KedroContext:
 
         """
         # '**/catalog*' reads modular pipeline configs
-        conf_catalog = self.config_loader.get("catalog*", "catalog*/**", "**/catalog*")
+        conf_catalog = self.config_loader.get("catalog")
         # turn relative paths in conf_catalog into absolute paths
         # before initializing the catalog
         conf_catalog = _convert_paths_to_absolute_posix(
             project_path=self.project_path, conf_dictionary=conf_catalog
         )
-        conf_creds = self._get_config_credentials()
+        conf_creds = self.config_loader.get("credentials", {})
 
         catalog = settings.DATA_CATALOG_CLASS.from_config(
             catalog=conf_catalog,
@@ -333,17 +326,6 @@ class KedroContext:
             _add_param_to_feed_dict(param_name, param_value)
 
         return feed_dict
-
-    def _get_config_credentials(self) -> Dict[str, Any]:
-        """Getter for credentials specified in credentials directory."""
-        try:
-            conf_creds = self.config_loader.get(
-                "credentials*", "credentials*/**", "**/credentials*"
-            )
-        except MissingConfigException as exc:
-            warn(f"Credentials not found in your Kedro project config.\n{str(exc)}")
-            conf_creds = {}
-        return conf_creds
 
 
 class KedroContextError(Exception):

@@ -2,10 +2,11 @@
 class model for a `ConfigLoader` implementation.
 """
 from abc import ABC, abstractmethod
+from collections.abc import MutableMapping
 from typing import Any, Dict
 
 
-class AbstractConfigLoader(ABC):
+class AbstractConfigLoader(MutableMapping):
     """``AbstractConfigLoader`` is the abstract base class
         for all `ConfigLoader` implementations.
     All user-defined `ConfigLoader` implementations should inherit
@@ -14,6 +15,10 @@ class AbstractConfigLoader(ABC):
 
     def __init__(
         self,
+        catalog,
+        parameters,
+        credentials,
+        logging,
         conf_source: str,
         env: str = None,
         runtime_params: Dict[str, Any] = None,
@@ -22,6 +27,32 @@ class AbstractConfigLoader(ABC):
         self.conf_source = conf_source
         self.env = env
         self.runtime_params = runtime_params
+
+        self.mapping = {}
+        # Mandatory configs
+        self.mapping["catalog"] = catalog
+        self.mapping["parameters"] = parameters
+        self.mapping["credentials"] = credentials
+        self.mapping["logging"] = logging
+
+    def __getitem__(self, key):
+        return self.mapping[key]
+
+    def __delitem__(self, key):
+        value = self[key]
+        del self.mapping[key]
+        self.pop(value, None)
+
+    def __setitem__(self, key, value):
+        if key in self:
+            del self[self[key]]
+        self.mapping[key] = value
+
+    def __iter__(self):
+        return iter(self.mapping)
+
+    def __len__(self):
+        return len(self.mapping)
 
     @abstractmethod  # pragma: no cover
     def get(self) -> Dict[str, Any]:
