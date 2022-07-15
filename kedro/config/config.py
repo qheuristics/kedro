@@ -93,7 +93,7 @@ class ConfigLoader(AbstractConfigLoader):
         self.default_run_env = default_run_env
 
     @property
-    def conf_paths(self):
+    def confœ_paths(self):
         """Property method to return deduplicated configuration paths."""
         return _remove_duplicates(self._build_conf_paths())
 
