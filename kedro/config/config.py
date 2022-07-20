@@ -3,9 +3,8 @@ or more configuration files from specified paths.
 """
 from pathlib import Path
 from typing import Any, Dict, Iterable, List
-from warnings import warn
 
-from kedro.config import AbstractConfigLoader, MissingConfigException
+from kedro.config import AbstractConfigLoader
 from kedro.config.common import _get_config_from_patterns, _remove_duplicates
 
 
@@ -106,7 +105,7 @@ class ConfigLoader(AbstractConfigLoader):
             conf_source=conf_source,
             env=env,
             runtime_params=runtime_params,
-            **mandatory_config_patterns
+            **mandatory_config_patterns,
         )
 
     @property
@@ -115,9 +114,12 @@ class ConfigLoader(AbstractConfigLoader):
         return _remove_duplicates(self._build_conf_paths())
 
     def get(self, *patterns: str) -> Dict[str, Any]:
+        if len(patterns) == 1:
+            patterns = patterns[0]
+        else:
+            patterns = list(patterns)
         return _get_config_from_patterns(
-            conf_paths=self.conf_paths, patterns=list(patterns)
-        )
+            conf_paths=self.conf_paths, patterns=patterns)
 
     def _build_conf_paths(self) -> Iterable[str]:
         run_env = self.env or self.default_run_env
