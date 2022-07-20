@@ -23,11 +23,15 @@ class AbstractConfigLoader(dict):
         self.env = env
         self.runtime_params = runtime_params
 
-        self.mapping = {}
+        self.mapping = kwargs
 
     def __getitem__(self, key):
         if key == "catalog":
             return self.get("catalog*", "catalog*/**", "**/catalog*")
+        if key == "parameters":
+            return self.get("parameters*", "parameters*/**", "**/parameters*")
+        if key == "credentials":
+            return self.get("credentials*", "credentials*/**", "**/credentials*")
         if key == "logging":
             return self.get("logging*", "logging*/**", "**/logging*")
         return self.mapping[key]

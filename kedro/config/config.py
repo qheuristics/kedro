@@ -102,12 +102,11 @@ class ConfigLoader(AbstractConfigLoader):
         if custom_patterns:
             mandatory_config_patterns.update(custom_patterns)
 
-        self.mapping = mandatory_config_patterns
-
         super().__init__(
             conf_source=conf_source,
             env=env,
             runtime_params=runtime_params,
+            **mandatory_config_patterns
         )
 
     @property
@@ -116,10 +115,7 @@ class ConfigLoader(AbstractConfigLoader):
         return _remove_duplicates(self._build_conf_paths())
 
     def get(self, *patterns: str) -> Dict[str, Any]:
-        value = None
-        if len(patterns) == 1:
-            value = self.mapping.get(patterns[0])
-        return value if value else _get_config_from_patterns(
+        return _get_config_from_patterns(
             conf_paths=self.conf_paths, patterns=list(patterns)
         )
 
