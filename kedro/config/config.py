@@ -2,7 +2,7 @@
 or more configuration files from specified paths.
 """
 from pathlib import Path
-from typing import Any, Dict, Iterable, Optional
+from typing import Any, Dict, Iterable, List
 from warnings import warn
 
 from kedro.config import AbstractConfigLoader, MissingConfigException
@@ -66,17 +66,14 @@ class ConfigLoader(AbstractConfigLoader):
     """
 
     def __init__(
-            self,
-            conf_source: str,
-            catalog=None,
-            parameters=None,
-            credentials=None,
-            logging=None,
-            env: str = None,
-            runtime_params: Dict[str, Any] = None,
-            *,
-            base_env: str = "base",
-            default_run_env: str = "local",
+        self,
+        conf_source: str,
+        env: str = None,
+        runtime_params: Dict[str, Any] = None,
+        *,
+        custom_patterns: Dict[str, List[str]] = None,
+        base_env: str = "base",
+        default_run_env: str = "local",
     ):
         """Instantiates a ``ConfigLoader``.
 
@@ -96,16 +93,18 @@ class ConfigLoader(AbstractConfigLoader):
         self.env = env
         self.conf_source = conf_source
 
-        catalog = self.get_essential_config("catalog", catalog)
-        parameters = self.get_essential_config("parameters", parameters)
-        credentials = self.get_essential_config("credentials", credentials)
-        logging = self.get_essential_config("logging", logging)
+        mandatory_config_patterns = {
+            "catalog": ["catalog*", "catalog*/**", "**/catalog*"],
+            "parameters": ["parameters*", "parameters*/**", "**/parameters*"],
+            "credentials": ["credentials*", "credentials*/**", "**/credentials*"],
+            "logging": ["logging*", "logging*/**", "**/logging*"],
+        }
+        if custom_patterns:
+            mandatory_config_patterns.update(custom_patterns)
+
+        self.mapping = mandatory_config_patterns
 
         super().__init__(
-            catalog=catalog,
-            parameters=parameters,
-            credentials=credentials,
-            logging=logging,
             conf_source=conf_source,
             env=env,
             runtime_params=runtime_params,
@@ -120,20 +119,9 @@ class ConfigLoader(AbstractConfigLoader):
         value = None
         if len(patterns) == 1:
             value = self.mapping.get(patterns[0])
-        return value or _get_config_from_patterns(
+        return value if value else _get_config_from_patterns(
             conf_paths=self.conf_paths, patterns=list(patterns)
         )
-
-    def get_essential_config(self, config_type, provided_patterns=None):
-        patterns = provided_patterns or f"{config_type}*", f"{config_type}*/**", f"**/{config_type}*"
-        try:
-            config = _get_config_from_patterns(
-                conf_paths=self.conf_paths, patterns=list(patterns)
-            )
-        except MissingConfigException as exc:
-            warn(f"Config ... not found in your Kedro project config.\n{str(exc)}")
-            config = {}
-        return config
 
     def _build_conf_paths(self) -> Iterable[str]:
         run_env = self.env or self.default_run_env

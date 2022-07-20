@@ -268,7 +268,6 @@ class KedroSession:
             env=env,
             runtime_params=extra_params,
             **settings.CONFIG_LOADER_ARGS,
-            **settings.BASIC_CONFIG_LOADER_ARGS
         )
 
     def close(self):
