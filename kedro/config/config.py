@@ -114,7 +114,7 @@ class ConfigLoader(AbstractConfigLoader):
         return _remove_duplicates(self._build_conf_paths())
 
     def get(self, *patterns: str) -> Dict[str, Any]:
-        if len(patterns) == 1:
+        if len(patterns) == 1 and isinstance(patterns[0], list):
             patterns = patterns[0]
         else:
             patterns = list(patterns)

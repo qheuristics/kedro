@@ -26,6 +26,8 @@ class AbstractConfigLoader(dict):
         self.mapping = kwargs
 
     def __getitem__(self, key):
+        # TODO: Discuss: I think I remember we decided to hard-code what's commented out below, but then users still wouldn't be able to provide custom entries for any of the "mandatory" configs, so I feel like we should just return the pattern from the dict?
+
         # if key == "catalog":
         #     return self.get("catalog*", "catalog*/**", "**/catalog*")
         # if key == "parameters":
