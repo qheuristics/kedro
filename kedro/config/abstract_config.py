@@ -19,6 +19,7 @@ class AbstractConfigLoader(dict):
         runtime_params: Dict[str, Any] = None,
         **kwargs
     ):
+        super().__init__()
         self.conf_source = conf_source
         self.env = env
         self.runtime_params = runtime_params
@@ -26,7 +27,9 @@ class AbstractConfigLoader(dict):
         self.mapping = kwargs
 
     def __getitem__(self, key):
-        # TODO: Discuss: I think I remember we decided to hard-code what's commented out below, but then users still wouldn't be able to provide custom entries for any of the "mandatory" configs, so I feel like we should just return the pattern from the dict?
+        # TODO: Discuss: I think I remember we decided to hard-code what's commented out below,
+        #  but then users still wouldn't be able to provide custom entries for any of the
+        #  "mandatory" configs, so I feel like we should just return the pattern from the dict?
 
         # if key == "catalog":
         #     return self.get("catalog*", "catalog*/**", "**/catalog*")

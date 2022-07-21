@@ -89,8 +89,6 @@ class ConfigLoader(AbstractConfigLoader):
         """
         self.base_env = base_env
         self.default_run_env = default_run_env
-        self.env = env
-        self.conf_source = conf_source
 
         mandatory_config_patterns = {
             "catalog": ["catalog*", "catalog*/**", "**/catalog*"],
@@ -118,8 +116,7 @@ class ConfigLoader(AbstractConfigLoader):
             patterns = patterns[0]
         else:
             patterns = list(patterns)
-        return _get_config_from_patterns(
-            conf_paths=self.conf_paths, patterns=patterns)
+        return _get_config_from_patterns(conf_paths=self.conf_paths, patterns=patterns)
 
     def _build_conf_paths(self) -> Iterable[str]:
         run_env = self.env or self.default_run_env
