@@ -29,7 +29,7 @@ https://kedro.readthedocs.io/en/stable/kedro_project_setup/settings.html."""
 # CONFIG_LOADER_CLASS = ConfigLoader
 # Keyword arguments to pass to the `CONFIG_LOADER_CLASS` constructor.
 # CONFIG_LOADER_ARGS = {
-#       "custom_patterns":{"catalog" : ["catalog*", "catalog*/**", "**/catalog*"]}
+#       "custom_patterns":{"spark" : ["spark*/"]}
 # }
 
 # Class that manages the Data Catalog.

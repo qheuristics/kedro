@@ -38,7 +38,7 @@ class AbstractConfigLoader(dict):
         return super().__getitem__(key)
 
     @abstractmethod  # pragma: no cover
-    def get(self) -> Dict[str, Any]:
+    def get(self) -> Dict[str, Any]:  # type: ignore
         """Required method to get all configurations."""
         pass
 

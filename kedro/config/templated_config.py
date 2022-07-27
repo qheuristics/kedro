@@ -145,12 +145,17 @@ class TemplatedConfigLoader(AbstractConfigLoader):
         globals_dict = deepcopy(globals_dict) or {}
         self._config_mapping = {**self._config_mapping, **globals_dict}
 
+    def __getitem__(self, key):
+        if key in self.patterns:
+            return self.get(self.patterns[key])
+        return super().__getitem__(key)
+
     @property
     def conf_paths(self):
         """Property method to return deduplicated configuration paths."""
         return _remove_duplicates(self._build_conf_paths())
 
-    def get(self, *patterns: str) -> Dict[str, Any]:
+    def get(self, *patterns: str) -> Dict[str, Any]:  # type: ignore
         """Tries to resolve the template variables in the config dictionary
         provided by the ``ConfigLoader`` (super class) ``get`` method using the
         dictionary of replacement values obtained in the ``__init__`` method.

@@ -345,13 +345,18 @@ class TestKedroSession:
         assert result.__class__.__name__ == "MyConfigLoader"
 
     @pytest.mark.usefixtures("mock_settings_config_loader_args")
-    def test_load_config_loader_args(self, fake_project, mock_package_name):
+    def test_load_config_loader_args(self, fake_project, mock_package_name, mocker):
         session = KedroSession.create(mock_package_name, fake_project)
         result = session._get_config_loader()
 
         assert isinstance(result, ConfigLoader)
+        mocker.patch(
+            "kedro.config.config.ConfigLoader.get",
+            return_value=["spark/*"],
+        )
         assert result.patterns["catalog"] == ["catalog*", "catalog*/**", "**/catalog*"]
         assert result.patterns["spark"] == ["spark/*"]
+        assert result["spark"] == ["spark/*"]
 
     def test_broken_config_loader(self, mock_settings_file_bad_config_loader_class):
         pattern = (

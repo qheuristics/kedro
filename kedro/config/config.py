@@ -106,14 +106,25 @@ class ConfigLoader(AbstractConfigLoader):
             runtime_params=runtime_params,
         )
 
+    def __getitem__(self, key):
+        if key in self.patterns:
+            return self.get(self.patterns[key])
+        return super().__getitem__(key)
+
     @property
     def conf_paths(self):
         """Property method to return deduplicated configuration paths."""
         return _remove_duplicates(self._build_conf_paths())
 
-    def get(self, *patterns: str) -> Dict[str, Any]:
+    def get(self, *patterns: str) -> Dict[str, Any]:  # type: ignore
+        # This check is needed because at this point patterns is a tuple(list) and we want
+        # to get out the list so it can be passed on to _get_config_from_patterns
+        if len(patterns) > 0 and isinstance(patterns[0], list):
+            iterable_patterns = patterns[0]
+        else:
+            iterable_patterns = list(patterns)
         return _get_config_from_patterns(
-            conf_paths=self.conf_paths, patterns=list(patterns)
+            conf_paths=self.conf_paths, patterns=iterable_patterns
         )
 
     def _build_conf_paths(self) -> Iterable[str]:

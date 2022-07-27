@@ -394,6 +394,24 @@ class TestTemplatedConfigLoader:
         }
         assert catalog == expected_catalog
 
+    def test_customised_patterns(self, tmp_path, template_config, mocker):
+        config_loader = TemplatedConfigLoader(
+            str(tmp_path),
+            globals_dict=template_config,
+            custom_patterns={"spark": ["spark*/"]},
+        )
+        assert config_loader.patterns["catalog"] == [
+            "catalog*",
+            "catalog*/**",
+            "**/catalog*",
+        ]
+        mocker.patch(
+            "kedro.config.templated_config.TemplatedConfigLoader.get",
+            return_value=["spark*/"],
+        )
+        assert config_loader.patterns["spark"] == ["spark*/"]
+        assert config_loader["spark"] == ["spark*/"]
+
 
 class TestFormatObject:
     @pytest.mark.parametrize(
