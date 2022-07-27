@@ -95,9 +95,7 @@ def mock_settings_config_loader_args(mocker):
     class MockSettings(_ProjectSettings):
         _CONFIG_LOADER_ARGS = Validator(
             "CONFIG_LOADER_ARGS",
-            default={
-                "custom_patterns": {"catalog": ["*catalog*"], "spark": ["spark/*"]}
-            },
+            default={"custom_patterns": {"spark": ["spark/*"]}},
         )
 
     return _mock_imported_settings_paths(mocker, MockSettings())
@@ -352,8 +350,8 @@ class TestKedroSession:
         result = session._get_config_loader()
 
         assert isinstance(result, ConfigLoader)
-        assert result.mapping.get("catalog") == ["*catalog*"]
-        assert result.mapping.get("spark") == ["spark/*"]
+        assert result.patterns["catalog"] == ["catalog*", "catalog*/**", "**/catalog*"]
+        assert result.patterns["spark"] == ["spark/*"]
 
     def test_broken_config_loader(self, mock_settings_file_bad_config_loader_class):
         pattern = (
