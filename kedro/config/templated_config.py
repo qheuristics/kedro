@@ -123,12 +123,12 @@ class TemplatedConfigLoader(AbstractConfigLoader):
         }
         if custom_patterns:
             mandatory_config_patterns.update(custom_patterns)
+        self.patterns = mandatory_config_patterns
 
         super().__init__(
             conf_source=conf_source,
             env=env,
             runtime_params=runtime_params,
-            **mandatory_config_patterns,
         )
         self.base_env = base_env
         self.default_run_env = default_run_env
