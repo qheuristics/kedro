@@ -107,9 +107,7 @@ class ConfigLoader(AbstractConfigLoader):
         )
 
     def __getitem__(self, key):
-        if key in self.patterns:
-            return self.get(self.patterns[key])
-        return super().__getitem__(key)
+        return self.get(self.patterns[key])
 
     @property
     def conf_paths(self):
