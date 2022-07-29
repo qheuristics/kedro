@@ -146,7 +146,7 @@ class TemplatedConfigLoader(AbstractConfigLoader):
         self._config_mapping = {**self._config_mapping, **globals_dict}
 
     def __getitem__(self, key):
-        return self.get(self.patterns[key])
+        return self.get(*self.patterns[key])
 
     @property
     def conf_paths(self):
