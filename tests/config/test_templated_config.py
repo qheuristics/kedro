@@ -400,7 +400,7 @@ class TestTemplatedConfigLoader:
             globals_dict=template_config,
             custom_patterns={"spark": ["spark*/"]},
         )
-        assert config_loader.patterns["catalog"] == [
+        assert config_loader.config_patterns["catalog"] == [
             "catalog*",
             "catalog*/**",
             "**/catalog*",
@@ -409,7 +409,7 @@ class TestTemplatedConfigLoader:
             "kedro.config.templated_config.TemplatedConfigLoader.get",
             return_value=["spark*/"],
         )
-        assert config_loader.patterns["spark"] == ["spark*/"]
+        assert config_loader.config_patterns["spark"] == ["spark*/"]
         assert config_loader["spark"] == ["spark*/"]
 
 

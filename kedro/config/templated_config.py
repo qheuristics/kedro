@@ -115,15 +115,15 @@ class TemplatedConfigLoader(AbstractConfigLoader):
                 obtained from the globals_pattern. In case of duplicate keys, the
                 ``globals_dict`` keys take precedence.
         """
-        mandatory_config_patterns = {
+        core_patterns = {
             "catalog": ["catalog*", "catalog*/**", "**/catalog*"],
             "parameters": ["parameters*", "parameters*/**", "**/parameters*"],
             "credentials": ["credentials*", "credentials*/**", "**/credentials*"],
             "logging": ["logging*", "logging*/**", "**/logging*"],
         }
         if custom_patterns:
-            mandatory_config_patterns.update(custom_patterns)
-        self.patterns = mandatory_config_patterns
+            core_patterns.update(custom_patterns)
+        self.config_patterns = core_patterns
 
         super().__init__(
             conf_source=conf_source,
@@ -146,7 +146,7 @@ class TemplatedConfigLoader(AbstractConfigLoader):
         self._config_mapping = {**self._config_mapping, **globals_dict}
 
     def __getitem__(self, key):
-        return self.get(*self.patterns[key])
+        return self.get(*self.config_patterns[key])
 
     @property
     def conf_paths(self):

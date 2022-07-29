@@ -354,8 +354,8 @@ class TestKedroSession:
             "kedro.config.config.ConfigLoader.get",
             return_value=["spark/*"],
         )
-        assert result.patterns["catalog"] == ["catalog*", "catalog*/**", "**/catalog*"]
-        assert result.patterns["spark"] == ["spark/*"]
+        assert result.config_patterns["catalog"] == ["catalog*", "catalog*/**", "**/catalog*"]
+        assert result.config_patterns["spark"] == ["spark/*"]
         assert result["spark"] == ["spark/*"]
 
     def test_broken_config_loader(self, mock_settings_file_bad_config_loader_class):
