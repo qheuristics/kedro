@@ -209,7 +209,8 @@ class _ProjectLogging(UserDict):
         # fixed on their side at some point, but until then we disable it.
         # See https://github.com/Textualize/rich/issues/2455
         if "DATABRICKS_RUNTIME_VERSION" not in os.environ:
-            rich.traceback.install(suppress=[click, str(Path(sys.executable).parent)])
+            print("Not inside Databrick")
+#             rich.traceback.install(suppress=[click, str(Path(sys.executable).parent)])
         rich.pretty.install()
 
     def configure(self, logging_config: Dict[str, Any]) -> None:
